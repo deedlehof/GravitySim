@@ -4,6 +4,7 @@
 
 # Directories
 QT += widgets
+QT += gui
 HEADERS += ./src/*.h
 SOURCES += ./src/*.cpp
 OBJECTS_DIR = ./objects
