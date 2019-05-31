@@ -15,8 +15,11 @@ RenderSim::RenderSim(){
 	Node b(Point(2, 5), 2, Vector2(2, 2));
 	Node c(Point(7, 6), 3, Vector2(3, 3));
 	cout << "Inserting new nodes" << endl;
+	cout << "Insert A" << endl;
 	center.insert(&a);
+	cout << "Insert B" << endl;
 	center.insert(&b);
+	cout << "Insert C" << endl;
 	center.insert(&c);
 	cout << "Searching for new nodes..." << endl;
 	cout << "Node a: " <<

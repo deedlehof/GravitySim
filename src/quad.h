@@ -6,8 +6,6 @@
 
 using namespace std;
 
-//arbitrary cap on how many nodes can be in one region
-const int MAX_NODE_CAP = 4;
 
 class Quad {
 
@@ -27,8 +25,7 @@ class Quad {
 		Point topLeft;
 		Point botRight;
 		//Nodes in quad
-		Node *nodes[MAX_NODE_CAP];
-		short numNodesInQuad;
+		Node *node;
 		//Children of this tree
 		Quad *topLeftTree;
 		Quad *topRightTree;

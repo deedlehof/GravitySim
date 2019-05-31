@@ -1,5 +1,6 @@
 #include "node.h"
 #include "quad.h"
+#include <iostream>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ Quad::Quad(){
 	nodeMassDistance.y = 0;
 	totalMass = 0;
 
-	numNodesInQuad = 0;
+	node = NULL;
 }
 
 Quad::Quad(Point _topLeft, Point _botRight){
@@ -34,7 +35,7 @@ Quad::Quad(Point _topLeft, Point _botRight){
 	nodeMassDistance.y = 0;
 	totalMass = 0;
 
-	numNodesInQuad = 0;
+	node = NULL;
 }
 
 bool Quad::insert(Node *newNode){
@@ -43,14 +44,14 @@ bool Quad::insert(Node *newNode){
 		return false;
 	}
 
-	//the node will be inserted somewhere in this quad or
-	//it's children so update its com, mass, and nodeMassDistance
-	updateCOM(newNode->getPos(), newNode->getMass());
+	//check that quad isn't too small
+	if (abs(topLeft.x - botRight.x) < 1){
+		return false;
+	}
 
 	//if there is space in this quad and there are no subdivisions
-	if(numNodesInQuad < MAX_NODE_CAP && topLeftTree == NULL){
-		nodes[numNodesInQuad] = newNode;
-		numNodesInQuad += 1;
+	if (node == NULL && topLeftTree == NULL){
+		node = newNode;
 		return true;
 	}
 
@@ -58,6 +59,23 @@ bool Quad::insert(Node *newNode){
 	if (topLeftTree == NULL){
 		subdivide();
 	}
+
+	//move the node stored in this quad down into leaves
+	//return false if operation fails
+	if (node != NULL){
+		updateCOM(node->getPos(), node->getMass());
+
+		if (!(topLeftTree->insert(node) ||
+				topRightTree->insert(node) ||
+				botLeftTree->insert(node) ||
+				botRightTree->insert(node)))	{
+			return false;
+		}
+		node = NULL;
+	}
+
+	//the node will be a children so update quads com, mass, and nodeMassDistance
+	updateCOM(newNode->getPos(), newNode->getMass());
 
 	if (topLeftTree->insert(newNode)) return true;
 	if (topRightTree->insert(newNode)) return true;
@@ -75,10 +93,8 @@ Node* Quad::search(Point p){
 	}
 
 	//check if point is one of quads nodes
-	for (int i = 0; i < numNodesInQuad; i+= 1){
-		if (nodes[i]->getPos() == p){
-			return nodes[i];
-		}
+	if (node && node->getPos() == p){
+		return node;
 	}
 
 	//check for subtrees, if none return NULL
