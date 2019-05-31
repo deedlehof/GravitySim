@@ -14,6 +14,10 @@ struct Point{
 	Point(){
 		x = y = 0;
 	}
+
+	bool operator==(const Point& rhs){
+		return ((this->x == rhs.x) && (this->y == rhs.y));
+	}
 };
 
 struct Vector2{
@@ -26,6 +30,10 @@ struct Vector2{
 
 	Vector2(){
 		x = y = 0.0;
+	}
+
+	bool operator==(const Vector2& rhs){
+		return ((this->x == rhs.x) && (this->y == rhs.y));
 	}
 };
 
