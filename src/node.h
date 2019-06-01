@@ -3,6 +3,8 @@
 
 using namespace std;
 
+const float GRAV_CONST = 1.0;
+
 struct Point{
 	int x, y;
 
@@ -45,12 +47,13 @@ class Node{
 		Point getPos();
 		int getMass();
 		Vector2 getVelocity();
+		void addForce(int objMass, Point objPos);
 
 	private:
 		Point position;
 		int mass;
 		Vector2 velocity;
-
+		Vector2 netForce;
 };
 
 
