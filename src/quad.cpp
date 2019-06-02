@@ -44,6 +44,11 @@ bool Quad::insert(Node *newNode){
 		return false;
 	}
 
+	//TODO USE THIS TO DETERMINE IF TWO NODES OVERLAP, COLLISION
+
+	//WHEN MAKING NEW NODES USE THE FALSE RETURN AS
+	//A SIGN TO INSERT ANOTHER, EXTRA NODE TO MAKE
+	//ACTUAL NODE NUMBER CORRECT
 	//check that quad isn't too small
 	if (abs(topLeft.x - botRight.x) < 1){
 		return false;
@@ -151,3 +156,39 @@ void Quad::updateCOM(Point pos, int mass){
 	COM.y = nodeMassDistance.y / totalMass;
 }
 
+void Quad::updateNodeForce(Node *fNode){
+	//a node shouldn't be updated with it's own force
+	if (node && fNode->getPos() == node->getPos()){
+		return;
+	}
+
+	//quad is empty, return
+	if (!node && !topLeftTree){
+		return;
+	}
+
+	//if the node is external add quad's node to fNode's force
+	if (node && !topLeftTree){
+		fNode->addForce(node->getMass(), node->getPos());
+		return;
+	}
+
+	//Otherwise, the node is internal
+	//check if it is within threshold distance
+	int distanceSquared = pow(fNode->getX() - COM.x, 2) +
+							pow(fNode->getY() - COM.y, 2);
+
+	int regionWidthSquared = pow(topLeft.x - botRight.x, 2);
+	//cast one variable to float to aviod int division
+	if ((float)regionWidthSquared / distanceSquared < BODY_THRESHOLD){
+		//treat region as one large body
+		fNode->addForce(totalMass, COM);
+		return;
+	} else {
+		//run the algorithm on all of the children
+		topLeftTree->updateNodeForce(fNode);
+		topRightTree->updateNodeForce(fNode);
+		botLeftTree->updateNodeForce(fNode);
+		botRightTree->updateNodeForce(fNode);
+	}
+}

@@ -6,6 +6,9 @@
 
 using namespace std;
 
+//default 0.5
+//value of 0 will make algorithm run force calc for each node
+const float BODY_THRESHOLD = 0.5;
 
 class Quad {
 
@@ -15,7 +18,7 @@ class Quad {
 		bool insert(Node *newNode);
 		Node* search(Point p);
 		bool inBoundary(Point p);
-		void updateTree();
+		void updateNodeForce(Node *fNode);
 
 	private:
 		void updateCOM(Point pos, int mass);

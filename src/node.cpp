@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include "node.h"
 
 using namespace std;
@@ -53,4 +54,27 @@ void Node::addForce(int objMass, Point objPos){
 	netForce.y += yForce;
 }
 
+void Node::updateVelocity(){
+	//Vf = Ft / m + Vi
+	velocity.x = netForce.x * (1 / UPDATES_PER_SEC) / mass + velocity.x;
+	velocity.y = netForce.y * (1 / UPDATES_PER_SEC) / mass + velocity.y;
+}
 
+void Node::updatePosition(){
+	//Xf = V*t + Xi
+	position.x = velocity.x * (1 / UPDATES_PER_SEC) + position.x;
+	position.y = velocity.y * (1 / UPDATES_PER_SEC) + position.y;
+}
+
+void Node::print(){
+	cout << "POSITION" << endl;
+	cout << "X: " << position.x << endl;
+	cout << "Y: " << position.y << endl;
+	cout << "MASS: " << mass << endl;
+	cout << "VELOCITY" << endl;
+	cout << "X: " << velocity.x << endl;
+	cout << "Y: " << velocity.y << endl;
+	cout << "FORCE" << endl;
+	cout << "X: " << netForce.x << endl;
+	cout << "Y: " << netForce.y << endl;
+}

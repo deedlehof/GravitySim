@@ -8,9 +8,9 @@
 using namespace std;
 
 RenderSim::RenderSim(){
-	cout << "Creating the root quad!" << endl;
+	//Creating the root quad
 	Quad center(Point(0, 0), Point (8, 8));
-	cout << "Creating new nodes for the quad tree" << endl;
+	//Creating and inserting new nodes for the quad tree
 	Node a(Point(1, 1), 1, Vector2(1, 1));
 	Node b(Point(2, 5), 2, Vector2(2, 2));
 	Node c(Point(7, 6), 3, Vector2(3, 3));
@@ -30,6 +30,8 @@ RenderSim::RenderSim(){
 		center.search(Point(7, 6))->getMass() << endl;
 	cout << "Non-existant node: " <<
 		center.search(Point(5, 5)) << endl;
+	center.updateNodeForce(&a);
+	a.print();
 }
 
 QSize RenderSim::minimumSizeHint() const {

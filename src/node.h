@@ -4,6 +4,7 @@
 using namespace std;
 
 const float GRAV_CONST = 1.0;
+const int UPDATES_PER_SEC = 30;
 
 struct Point{
 	int x, y;
@@ -19,6 +20,9 @@ struct Point{
 
 	bool operator==(const Point& rhs){
 		return ((this->x == rhs.x) && (this->y == rhs.y));
+	}
+	bool operator!=(const Point& rhs){
+		return ((this->x != rhs.x) || (this->y != rhs.y));
 	}
 };
 
@@ -37,6 +41,10 @@ struct Vector2{
 	bool operator==(const Vector2& rhs){
 		return ((this->x == rhs.x) && (this->y == rhs.y));
 	}
+
+	bool operator!=(const Vector2& rhs){
+		return ((this->x != rhs.x) || (this->y != rhs.y));
+	}
 };
 
 class Node{
@@ -48,6 +56,9 @@ class Node{
 		int getMass();
 		Vector2 getVelocity();
 		void addForce(int objMass, Point objPos);
+		void updateVelocity();
+		void updatePosition();
+		void print();
 
 	private:
 		Point position;
