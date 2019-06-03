@@ -38,6 +38,18 @@ Quad::Quad(Point _topLeft, Point _botRight){
 	node = NULL;
 }
 
+Quad::~Quad(){
+	if (topLeftTree){
+		delete topLeftTree;
+		delete topRightTree;
+		delete botLeftTree;
+		delete botRightTree;
+	}
+	if (node){
+		delete node;
+	}
+}
+
 bool Quad::insert(Node *newNode){
 	//if new node isn't in quad boundry, stop
 	if (!inBoundary(newNode->getPos())){
@@ -50,34 +62,23 @@ bool Quad::insert(Node *newNode){
 	//A SIGN TO INSERT ANOTHER, EXTRA NODE TO MAKE
 	//ACTUAL NODE NUMBER CORRECT
 	//check that quad isn't too small
-	if (abs(topLeft.x - botRight.x) < 1){
+	if ((botRight.x - topLeft.x) < 1){
 		return false;
 	}
 
-	//if there is space in this quad and there are no subdivisions
-	if (node == NULL && topLeftTree == NULL){
-		node = newNode;
-		return true;
-	}
-
-	//otherwise, subdivide and add the point to whichever subtree will accept it
-	if (topLeftTree == NULL){
-		subdivide();
-	}
-
-	//move the node stored in this quad down into leaves
-	//return false if operation fails
-	if (node != NULL){
-		updateCOM(node->getPos(), node->getMass());
-
-		if (!(topLeftTree->insert(node) ||
-				topRightTree->insert(node) ||
-				botLeftTree->insert(node) ||
-				botRightTree->insert(node)))	{
-			return false;
+	//if quad is leaf
+	if (!topLeftTree){
+		//no node in leaf, insert it
+		if (!node) {
+			node = newNode;
+			return true;
+		} else { //already has node, turn quad into internal
+			subdivide();
+			if (!insert(node)) return false;
+			node = NULL;
 		}
-		node = NULL;
 	}
+
 
 	//the node will be a children so update quads com, mass, and nodeMassDistance
 	updateCOM(newNode->getPos(), newNode->getMass());
@@ -121,7 +122,7 @@ void Quad::subdivide(){
 	if (topLeftTree == NULL){
 		topLeftTree = new Quad(
 				Point(topLeft.x, topLeft.y),
-				Point((topLeft.x + botRight.x) / 2, botRight.y));
+				Point((topLeft.x + botRight.x) / 2, (topLeft.y + botRight.y) / 2));
 	}
 
 	if (topRightTree == NULL){

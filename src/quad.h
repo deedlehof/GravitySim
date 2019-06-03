@@ -15,6 +15,7 @@ class Quad {
 	public:
 		Quad();
 		Quad(Point _topLeft, Point _botRight);
+		~Quad();
 		bool insert(Node *newNode);
 		Node* search(Point p);
 		bool inBoundary(Point p);
