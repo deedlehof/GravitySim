@@ -45,9 +45,6 @@ Quad::~Quad(){
 		delete botLeftTree;
 		delete botRightTree;
 	}
-	if (node){
-		delete node;
-	}
 }
 
 bool Quad::insert(Node *newNode){

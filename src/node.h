@@ -4,7 +4,7 @@
 using namespace std;
 
 const float GRAV_CONST = 1.0;
-const int UPDATES_PER_SEC = 30;
+const int UPDATES_PER_SEC = 1;
 
 struct Point{
 	int x, y;
@@ -56,8 +56,9 @@ class Node{
 		int getMass();
 		Vector2 getVelocity();
 		void addForce(int objMass, Point objPos);
-		void updateVelocity();
+		void resetForce();
 		void updatePosition();
+		void updateVelocity();
 		void print();
 
 	private:

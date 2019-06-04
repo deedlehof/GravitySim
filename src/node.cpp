@@ -54,16 +54,21 @@ void Node::addForce(int objMass, Point objPos){
 	netForce.y += yForce;
 }
 
+void Node::resetForce(){
+	netForce.x = 0;
+	netForce.y = 0;
+}
+
 void Node::updateVelocity(){
 	//Vf = Ft / m + Vi
-	velocity.x = netForce.x * (1 / UPDATES_PER_SEC) / mass + velocity.x;
-	velocity.y = netForce.y * (1 / UPDATES_PER_SEC) / mass + velocity.y;
+	velocity.x += netForce.x * (1.0 / UPDATES_PER_SEC) / mass;
+	velocity.y += netForce.y * (1.0 / UPDATES_PER_SEC) / mass;
 }
 
 void Node::updatePosition(){
 	//Xf = V*t + Xi
-	position.x = velocity.x * (1 / UPDATES_PER_SEC) + position.x;
-	position.y = velocity.y * (1 / UPDATES_PER_SEC) + position.y;
+	position.x += velocity.x * (1.0 / UPDATES_PER_SEC);
+	position.y += velocity.y * (1.0 / UPDATES_PER_SEC);
 }
 
 void Node::print(){
