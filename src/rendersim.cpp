@@ -25,8 +25,8 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 
 	createNodes();
 	//TODO DELETE
-	//insertNodesIntoQuad();
-	//updateNodesForces();
+	insertNodesIntoQuad();
+	updateNodesForces();
 	//
 
 	QTimer *timer = new QTimer(this);
@@ -36,6 +36,7 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 }
 
 void RenderSim::createNodes(){
+	///*
 	int id = 0;
 	for (int i = 0; i < numNodes; i += 1){
 		Point startPoint = Point(rand() % winSize + 1,
@@ -51,6 +52,7 @@ void RenderSim::createNodes(){
 		nodes.push_back(newNode);
 		id += 1;
 	}
+	//*/
 	/*
 		Point p1 = Point(50, 50);
 		int m1 = 15;
@@ -58,29 +60,41 @@ void RenderSim::createNodes(){
 		Node *n1 = new Node(0, p1, m1, v1);
 		nodes.push_back(n1);
 
-		Point p2 = Point(75, 75);
+		Point p2 = Point(50, 55);
 		int m2 = 4;
-		Vector2 v2(-1.0, 0.0);
+		//Vector2 v2(-0.00004, 0.0);
+		Vector2 v2(0.0, 0.0);
 		Node *n2 = new Node(1, p2, m2, v2);
 		nodes.push_back(n2);
 
-		Point p3 = Point(25, 25);
-		int m3 = 4;
-		Vector2 v3(1, 0.0);
-		Node *n3 = new Node(2, p3, m3, v3);
-		nodes.push_back(n3);
+		//Point p3 = Point(25, 25);
+		//int m3 = 4;
+		//Vector2 v3(1, 0.0);
+		//Node *n3 = new Node(2, p3, m3, v3);
+		//nodes.push_back(n3);
 	*/
 }
 
 void RenderSim::insertNodesIntoQuad(){
-	for (int i = 0; i < numNodes; i += 1){
-		root->insert(nodes[i]);
+	list<Node*>::iterator it = nodes.begin();
+	while (it != nodes.end()){
+		if (!root->insert(*it)){
+			it = nodes.erase(it);
+			numNodes -= 1;
+		} else {
+			it++;
+		}
 	}
 }
 
 void RenderSim::updateNodesForces(){
-	for (int i = 0; i < numNodes; i += 1){
-		root->updateNodeForce(nodes[i]);
+	list<Node*>::iterator it;
+	for (it = nodes.begin(); it != nodes.end(); ++it){
+		if (*it){
+			root->updateNodeForce(*it);
+		} else {
+			cout << "DANGER! DANGER! ATTEMPT TO DO BAD THINGS!" << endl;
+		}
 	}
 }
 
@@ -118,12 +132,14 @@ void RenderSim::paintEvent(QPaintEvent *){
 	painter.setPen(Qt::white);
 	painter.setBrush(Qt::black);
 
-	for (int i = 0; i < numNodes; i += 1){
-		nodes[i]->updateVelocity();
-		nodes[i]->updatePosition();
-		int radius = nodes[i]->getRadius();
-		painter.drawEllipse(nodes[i]->getX() - radius, nodes[i]->getY() - radius,
-						radius*2, radius*2);
+	for (auto const& node: nodes){
+		if (node){
+			node->updateVelocity();
+			node->updatePosition();
+			int radius = node->getRadius();
+			painter.drawEllipse(node->getX() - radius, node->getY() - radius,
+							radius*2, radius*2);
+		}
 	}
 	/*
 	nodes[0]->print();

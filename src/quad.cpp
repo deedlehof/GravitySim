@@ -71,9 +71,11 @@ bool Quad::insert(Node *newNode){
 	//A SIGN TO INSERT ANOTHER, EXTRA NODE TO MAKE
 	//ACTUAL NODE NUMBER CORRECT
 	//check that quad isn't too small
+	/*
 	if ((botRight.x - topLeft.x) < 1){
 		return false;
 	}
+	*/
 
 	//if quad is leaf
 	if (!topLeftTree){
@@ -82,12 +84,14 @@ bool Quad::insert(Node *newNode){
 			node = newNode;
 			return true;
 		} else { //already has node, turn quad into internal
+			//check for collision
+			if (node->attemptCollide(newNode)) { return false; }
+
 			subdivide();
 			if (!insert(node)) return false;
 			node = NULL;
 		}
 	}
-
 
 	//the node will be a children so update quads com, mass, and nodeMassDistance
 	updateCOM(newNode->getPos(), newNode->getMass());

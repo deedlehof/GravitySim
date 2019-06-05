@@ -5,6 +5,7 @@
 #include <QPen>
 #include <QWidget>
 #include <QPainter>
+#include <list>
 
 #include "node.h"
 #include "quad.h"
@@ -37,7 +38,7 @@ class RenderSim : public QWidget {
 		int numNodes;
 		int winSize;
 		Quad *root;
-		vector<Node*> nodes;
+		list<Node*> nodes;
 };
 
 #endif

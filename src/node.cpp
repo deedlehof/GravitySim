@@ -39,6 +39,34 @@ Vector2 Node::getVelocity(){
 	return velocity;
 }
 
+bool Node::attemptCollide(Node *collision){
+	int xDist = position.x - collision->getX();
+	int yDist = position.y - collision->getY();
+	int distanceSquared = xDist * xDist + yDist * yDist;
+	int threshold = pow(getRadius() + collision->getRadius(), 2);
+
+	//test if the distance between the nodes
+	//is greater than the distance if they were touching
+	if (distanceSquared > threshold){
+		return false;
+	}
+
+	//the points are touching, collide them
+	int colliderMass = collision->getMass();
+	int totalMass = mass + colliderMass;
+
+	//updates nodes values
+	position.x = round((position.x * mass + collision->getX() * colliderMass) / totalMass);
+	position.y = round((position.y * mass + collision->getY() * colliderMass) / totalMass);
+
+	velocity.x = (velocity.x * mass + collision->getVelocity().x * colliderMass) / totalMass;
+	velocity.y = (velocity.y * mass + collision->getVelocity().y * colliderMass) / totalMass;
+
+	mass = totalMass;
+
+	return true;
+}
+
 void Node::addForce(int objMass, Point objPos){
 	int xDist, yDist;
 	float xForce, yForce;

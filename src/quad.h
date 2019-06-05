@@ -12,9 +12,6 @@ using namespace std;
 const float BODY_THRESHOLD = 0.5;
 
 class Quad {
-
-	friend class RenderSim;
-
 	public:
 		Quad();
 		Quad(Point _topLeft, Point _botRight);

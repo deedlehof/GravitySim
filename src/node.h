@@ -5,8 +5,8 @@ using namespace std;
 
 //const float GRAV_CONST = 6.674e-11;
 const float GRAV_CONST = 6e-10;
-const int UPDATES_PER_SEC = 5;
-const int TIMESTEP = 24*3600;
+const int UPDATES_PER_SEC = 1;
+const int TIMESTEP = 24 * 3600 / UPDATES_PER_SEC;
 
 struct Point{
 	int x, y;
@@ -50,6 +50,9 @@ struct Vector2{
 };
 
 class Node{
+
+	friend class Quad;
+
 	public:
 		Node(int _id, Point _pos, int _mass, Vector2 _vel);
 		int getID();
@@ -60,6 +63,7 @@ class Node{
 		int getMass();
 		Vector2 getVelocity();
 		void addForce(int objMass, Point objPos);
+		bool attemptCollide(Node *collision);
 		void resetForce();
 		void updatePosition();
 		void updateVelocity();
