@@ -2,6 +2,7 @@
 #define QUAD_H
 
 #include <cmath>
+#include <vector>
 #include "node.h"
 
 using namespace std;
@@ -12,6 +13,8 @@ const float BODY_THRESHOLD = 0.5;
 
 class Quad {
 
+	friend class RenderSim;
+
 	public:
 		Quad();
 		Quad(Point _topLeft, Point _botRight);
@@ -20,6 +23,7 @@ class Quad {
 		Node* search(Point p);
 		bool inBoundary(Point p);
 		void updateNodeForce(Node *fNode);
+		void getBounds(vector<Point> &topCorners, vector<Point> &botCorners);
 
 	private:
 		void updateCOM(Point pos, int mass);

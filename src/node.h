@@ -3,8 +3,10 @@
 
 using namespace std;
 
-const float GRAV_CONST = 1.0;
-const int UPDATES_PER_SEC = 1;
+//const float GRAV_CONST = 6.674e-11;
+const float GRAV_CONST = 6e-10;
+const int UPDATES_PER_SEC = 5;
+const int TIMESTEP = 24*3600;
 
 struct Point{
 	int x, y;
@@ -49,9 +51,11 @@ struct Vector2{
 
 class Node{
 	public:
-		Node(Point _pos, int _mass, Vector2 _vel);
+		Node(int _id, Point _pos, int _mass, Vector2 _vel);
+		int getID();
 		int getX();
 		int getY();
+		int getRadius();
 		Point getPos();
 		int getMass();
 		Vector2 getVelocity();
@@ -61,11 +65,13 @@ class Node{
 		void updateVelocity();
 		void print();
 
+
 	private:
 		Point position;
 		int mass;
 		Vector2 velocity;
 		Vector2 netForce;
+		int id;
 };
 
 

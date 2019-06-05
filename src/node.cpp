@@ -4,10 +4,15 @@
 
 using namespace std;
 
-Node::Node(Point _pos, int _mass, Vector2 _vel){
+Node::Node(int _id, Point _pos, int _mass, Vector2 _vel){
+	id = _id;
 	position = _pos;
 	mass = _mass;
 	velocity = _vel;
+}
+
+int Node::getID(){
+	return id;
 }
 
 int Node::getX(){
@@ -20,6 +25,10 @@ int Node::getY(){
 
 Point Node::getPos(){
 	return position;
+}
+
+int Node::getRadius(){
+	return ceil(mass/2);
 }
 
 int Node::getMass(){
@@ -35,19 +44,18 @@ void Node::addForce(int objMass, Point objPos){
 	float xForce, yForce;
 
 	xDist = objPos.x - position.x;
-	yDist = objPos.x - position.x;
+	yDist = objPos.y - position.y;
 
-	//uses F = G * m1 * m2 / r^2
-	xForce = GRAV_CONST * mass * objMass / pow(xDist, 2);
-	yForce = GRAV_CONST * mass * objMass / pow(yDist, 2);
+	int distSquared = xDist * xDist + yDist * yDist;
 
-	//forces are given a sign for direction
-	if (xDist < 0){
-		xForce *= -1;
-	}
-
-	if (yDist < 0){
-		yForce *= -1;
+	if (distSquared == 0){
+		xForce = 0;
+		yForce = 0;
+	} else {
+		float totalForce = GRAV_CONST * mass * objMass / distSquared;
+		float theta = atan2(yDist, xDist);
+		xForce = cos(theta) * totalForce;
+		yForce = sin(theta) * totalForce;
 	}
 
 	netForce.x += xForce;
@@ -61,14 +69,14 @@ void Node::resetForce(){
 
 void Node::updateVelocity(){
 	//Vf = Ft / m + Vi
-	velocity.x += netForce.x * (1.0 / UPDATES_PER_SEC) / mass;
-	velocity.y += netForce.y * (1.0 / UPDATES_PER_SEC) / mass;
+	velocity.x += netForce.x / mass * TIMESTEP;
+	velocity.y += netForce.y / mass * TIMESTEP;
 }
 
 void Node::updatePosition(){
 	//Xf = V*t + Xi
-	position.x += velocity.x * (1.0 / UPDATES_PER_SEC);
-	position.y += velocity.y * (1.0 / UPDATES_PER_SEC);
+	position.x += round(velocity.x * TIMESTEP);
+	position.y += round(velocity.y * TIMESTEP);
 }
 
 void Node::print(){

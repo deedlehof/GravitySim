@@ -33,36 +33,42 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 	timer->start(msSleep);
 
-
 }
 
 void RenderSim::createNodes(){
-	///*
+	int id = 0;
 	for (int i = 0; i < numNodes; i += 1){
 		Point startPoint = Point(rand() % winSize + 1,
 									rand() % winSize + 1);
 
 		int startMass = rand() % MAX_INIT_MASS + 1;
 
-		Vector2 startVel(rand() % MAX_INIT_VELOCITY,
-							rand() % MAX_INIT_VELOCITY);
+		//Vector2 startVel(rand() % MAX_INIT_VELOCITY,
+		//					rand() % MAX_INIT_VELOCITY);
+		Vector2 startVel(0.0, 0.0);
 
-		Node *newNode = new Node(startPoint, startMass, startVel);
+		Node *newNode = new Node(id, startPoint, startMass, startVel);
 		nodes.push_back(newNode);
+		id += 1;
 	}
-	//*/
 	/*
 		Point p1 = Point(50, 50);
-		int m1 = 8;
-		Vector2 v1(0, 0);
-		Node *n1 = new Node(p1, m1, v1);
+		int m1 = 15;
+		Vector2 v1(0.0, 0.0);
+		Node *n1 = new Node(0, p1, m1, v1);
 		nodes.push_back(n1);
 
-		Point p2 = Point(50, 25);
+		Point p2 = Point(75, 75);
 		int m2 = 4;
-		Vector2 v2(0, 0);
-		Node *n2 = new Node(p2, m2, v2);
+		Vector2 v2(-1.0, 0.0);
+		Node *n2 = new Node(1, p2, m2, v2);
 		nodes.push_back(n2);
+
+		Point p3 = Point(25, 25);
+		int m3 = 4;
+		Vector2 v3(1, 0.0);
+		Node *n3 = new Node(2, p3, m3, v3);
+		nodes.push_back(n3);
 	*/
 }
 
@@ -88,23 +94,42 @@ QSize RenderSim::sizeHint() const {
 
 void RenderSim::paintEvent(QPaintEvent *){
 	QPainter painter(this);
-	//painter.setPen(Qt::blue);
-	painter.setBrush(Qt::black);
 
 	if (root){
 		delete root;
 		root = new Quad(Point(0, 0), Point(winSize, winSize));
 	}
+
 	insertNodesIntoQuad();
+
+	painter.setPen(Qt::blue);
+	painter.setBrush(Qt::white);
+	vector<Point> topCorners;
+	vector<Point> botCorners;
+	root->getBounds(topCorners, botCorners);
+	for (int i =0; i < topCorners.size(); i += 1){
+		int width = botCorners[i].x - topCorners[i].x;
+		int height = botCorners[i].y - topCorners[i].y;
+		painter.drawRect(topCorners[i].x, topCorners[i].y, width, height);
+	}
+
 	updateNodesForces();
+
+	painter.setPen(Qt::white);
+	painter.setBrush(Qt::black);
 
 	for (int i = 0; i < numNodes; i += 1){
 		nodes[i]->updateVelocity();
 		nodes[i]->updatePosition();
-		painter.drawEllipse(nodes[i]->getX(), nodes[i]->getY(),
-						nodes[i]->getMass(), nodes[i]->getMass());
-		nodes[i]->print();
-		cout << endl;
-		nodes[i]->resetForce();
+		int radius = nodes[i]->getRadius();
+		painter.drawEllipse(nodes[i]->getX() - radius, nodes[i]->getY() - radius,
+						radius*2, radius*2);
 	}
+	/*
+	nodes[0]->print();
+	nodes[0]->resetForce();
+	nodes[1]->print();
+	nodes[1]->resetForce();
+	cout << endl;
+	*/
 }

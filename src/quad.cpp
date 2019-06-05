@@ -47,6 +47,18 @@ Quad::~Quad(){
 	}
 }
 
+void Quad::getBounds(vector<Point> &topCorners, vector<Point> &botCorners){
+	topCorners.push_back(topLeft);
+	botCorners.push_back(botRight);
+
+	if (topLeftTree) {
+		topLeftTree->getBounds(topCorners, botCorners);
+		topRightTree->getBounds(topCorners, botCorners);
+		botLeftTree->getBounds(topCorners, botCorners);
+		botRightTree->getBounds(topCorners, botCorners);
+	}
+}
+
 bool Quad::insert(Node *newNode){
 	//if new node isn't in quad boundry, stop
 	if (!inBoundary(newNode->getPos())){
@@ -124,17 +136,17 @@ void Quad::subdivide(){
 
 	if (topRightTree == NULL){
 		topRightTree = new Quad(
-				Point((topLeft.x + botRight.x) / 2, topLeft.y),
+				Point((topLeft.x + botRight.x) / 2 + 1, topLeft.y),
 					Point(botRight.x, (topLeft.y + botRight.y) / 2));
 	}
 	if (botLeftTree == NULL){
 		botLeftTree = new Quad(
-				Point(topLeft.x, (topLeft.y + botRight.y) / 2),
+				Point(topLeft.x, (topLeft.y + botRight.y) / 2 + 1),
 				Point((topLeft.x + botRight.x) / 2, botRight.y));
 	}
 	if (botRightTree == NULL){
 		botRightTree = new Quad(
-				Point((topLeft.x + botRight.x) / 2, (topLeft.y + botRight.y) / 2),
+				Point((topLeft.x + botRight.x) / 2 + 1, (topLeft.y + botRight.y) / 2 + 1),
 				Point(botRight.x, botRight.y));
 	}
 }
@@ -155,34 +167,12 @@ void Quad::updateCOM(Point pos, int mass){
 }
 
 void Quad::updateNodeForce(Node *fNode){
-	//a node shouldn't be updated with it's own force
-	if (node && fNode->getPos() == node->getPos()){
-		return;
-	}
-
-	//quad is empty, return
-	if (!node && !topLeftTree){
-		return;
-	}
-
-	//if the node is external add quad's node to fNode's force
-	if (node && !topLeftTree){
-		fNode->addForce(node->getMass(), node->getPos());
-		return;
-	}
-
-	//Otherwise, the node is internal
-	//check if it is within threshold distance
-	int distanceSquared = pow(fNode->getX() - COM.x, 2) +
-							pow(fNode->getY() - COM.y, 2);
-
-	int regionWidthSquared = pow(topLeft.x - botRight.x, 2);
-	//cast one variable to float to aviod int division
-	if ((float)regionWidthSquared / distanceSquared < BODY_THRESHOLD){
-		//treat region as one large body
-		fNode->addForce(totalMass, COM);
-		return;
-	} else {
+	if (node) {
+		//update force if node is not updating node
+		if (fNode->getID() != node->getID()){
+			fNode->addForce(node->getMass(), node->getPos());
+		}
+	} else if (topLeftTree){
 		//run the algorithm on all of the children
 		topLeftTree->updateNodeForce(fNode);
 		topRightTree->updateNodeForce(fNode);
