@@ -36,10 +36,17 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 }
 
 void RenderSim::createNodes(){
-	///*
+	/*
+	Vector2 p1(250, 250);
+	int m1 = 300;
+	Vector2 v1(0.0, 0.0);
+	Node *n1 = new Node(0, p1, m1, v1);
+	nodes.push_back(n1);
+	*/
+	/*
 	int id = 0;
 	for (int i = 0; i < numNodes; i += 1){
-		Point startPoint = Point(rand() % winSize + 1,
+		Vector2 startPoint(rand() % winSize + 1,
 									rand() % winSize + 1);
 
 		int startMass = rand() % MAX_INIT_MASS + 1;
@@ -52,9 +59,9 @@ void RenderSim::createNodes(){
 		nodes.push_back(newNode);
 		id += 1;
 	}
-	//*/
-	/*
-		Point p1 = Point(50, 50);
+	*/
+	///*
+		Point p1 = Point(250, 250);
 		int m1 = 15;
 		Vector2 v1(0.0, 0.0);
 		Node *n1 = new Node(0, p1, m1, v1);
@@ -72,7 +79,7 @@ void RenderSim::createNodes(){
 		//Vector2 v3(1, 0.0);
 		//Node *n3 = new Node(2, p3, m3, v3);
 		//nodes.push_back(n3);
-	*/
+	//*/
 }
 
 void RenderSim::insertNodesIntoQuad(){
@@ -136,7 +143,7 @@ void RenderSim::paintEvent(QPaintEvent *){
 		if (node){
 			node->updateVelocity();
 			node->updatePosition();
-			int radius = node->getRadius();
+			int radius = ceil(node->getRadius());
 			painter.drawEllipse(node->getX() - radius, node->getY() - radius,
 							radius*2, radius*2);
 		}

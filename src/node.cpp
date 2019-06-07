@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Node::Node(int _id, Point _pos, int _mass, Vector2 _vel){
+Node::Node(int _id, Vector2 _pos, float _mass, Vector2 _vel){
 	id = _id;
 	position = _pos;
 	mass = _mass;
@@ -15,23 +15,23 @@ int Node::getID(){
 	return id;
 }
 
-int Node::getX(){
+double Node::getX(){
 	return position.x;
 }
 
-int Node::getY(){
+double Node::getY(){
 	return position.y;
 }
 
-Point Node::getPos(){
+Vector2 Node::getPos(){
 	return position;
 }
 
-int Node::getRadius(){
-	return ceil(mass/2);
+float Node::getRadius(){
+	return sqrt(mass/2);
 }
 
-int Node::getMass(){
+float Node::getMass(){
 	return mass;
 }
 
@@ -40,10 +40,10 @@ Vector2 Node::getVelocity(){
 }
 
 bool Node::attemptCollide(Node *collision){
-	int xDist = position.x - collision->getX();
-	int yDist = position.y - collision->getY();
-	int distanceSquared = xDist * xDist + yDist * yDist;
-	int threshold = pow(getRadius() + collision->getRadius(), 2);
+	float xDist = position.x - collision->getX();
+	float yDist = position.y - collision->getY();
+	float distanceSquared = xDist * xDist + yDist * yDist;
+	float threshold = pow(getRadius() + collision->getRadius(), 2);
 
 	//test if the distance between the nodes
 	//is greater than the distance if they were touching
@@ -52,12 +52,8 @@ bool Node::attemptCollide(Node *collision){
 	}
 
 	//the points are touching, collide them
-	int colliderMass = collision->getMass();
-	int totalMass = mass + colliderMass;
-
-	//updates nodes values
-	position.x = round((position.x * mass + collision->getX() * colliderMass) / totalMass);
-	position.y = round((position.y * mass + collision->getY() * colliderMass) / totalMass);
+	float colliderMass = collision->getMass();
+	float totalMass = mass + colliderMass;
 
 	velocity.x = (velocity.x * mass + collision->getVelocity().x * colliderMass) / totalMass;
 	velocity.y = (velocity.y * mass + collision->getVelocity().y * colliderMass) / totalMass;
@@ -67,14 +63,14 @@ bool Node::attemptCollide(Node *collision){
 	return true;
 }
 
-void Node::addForce(int objMass, Point objPos){
-	int xDist, yDist;
+void Node::addForce(float objMass, Vector2 objPos){
+	float xDist, yDist;
 	float xForce, yForce;
 
 	xDist = objPos.x - position.x;
 	yDist = objPos.y - position.y;
 
-	int distSquared = xDist * xDist + yDist * yDist;
+	float distSquared = xDist * xDist + yDist * yDist;
 
 	if (distSquared == 0){
 		xForce = 0;

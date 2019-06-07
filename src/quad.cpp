@@ -105,7 +105,7 @@ bool Quad::insert(Node *newNode){
 	return false;
 }
 
-Node* Quad::search(Point p){
+Node* Quad::search(Vector2 p){
 	//check if current quad can contain it
 	if (!inBoundary(p)){
 		return NULL;
@@ -155,14 +155,14 @@ void Quad::subdivide(){
 	}
 }
 
-bool Quad::inBoundary(Point p){
+bool Quad::inBoundary(Vector2 p){
 	return (p.x >= topLeft.x &&
 			p.x <= botRight.x &&
 			p.y >= topLeft.y &&
 			p.y <= botRight.y);
 }
 
-void Quad::updateCOM(Point pos, int mass){
+void Quad::updateCOM(Vector2 pos, int mass){
 	nodeMassDistance.x += mass * pos.x;
 	nodeMassDistance.y += mass * pos.y;
 	totalMass += mass;

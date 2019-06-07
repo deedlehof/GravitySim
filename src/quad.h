@@ -17,13 +17,13 @@ class Quad {
 		Quad(Point _topLeft, Point _botRight);
 		~Quad();
 		bool insert(Node *newNode);
-		Node* search(Point p);
-		bool inBoundary(Point p);
+		Node* search(Vector2 p);
+		bool inBoundary(Vector2 p);
 		void updateNodeForce(Node *fNode);
 		void getBounds(vector<Point> &topCorners, vector<Point> &botCorners);
 
 	private:
-		void updateCOM(Point pos, int mass);
+		void updateCOM(Vector2 pos, int mass);
 		void subdivide();
 
 		//Holds two corners of node boundry
@@ -37,10 +37,10 @@ class Quad {
 		Quad *botLeftTree;
 		Quad *botRightTree;
 
-		Point COM; //children's center of mass
+		Vector2 COM; //children's center of mass
 		int totalMass;
 		//used for calculating center of mass
-		Point nodeMassDistance;
+		Vector2 nodeMassDistance;
 
 };
 
