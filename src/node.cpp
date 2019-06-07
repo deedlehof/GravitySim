@@ -27,8 +27,9 @@ Vector2 Node::getPos(){
 	return position;
 }
 
+//TODO FIX
 float Node::getRadius(){
-	return sqrt(mass/2);
+	return 5;
 }
 
 float Node::getMass(){
@@ -40,6 +41,7 @@ Vector2 Node::getVelocity(){
 }
 
 bool Node::attemptCollide(Node *collision){
+	//distances in AU
 	float xDist = position.x - collision->getX();
 	float yDist = position.y - collision->getY();
 	float distanceSquared = xDist * xDist + yDist * yDist;
@@ -64,8 +66,8 @@ bool Node::attemptCollide(Node *collision){
 }
 
 void Node::addForce(float objMass, Vector2 objPos){
-	float xDist, yDist;
-	float xForce, yForce;
+	double xDist, yDist;
+	double xForce, yForce;
 
 	xDist = objPos.x - position.x;
 	yDist = objPos.y - position.y;

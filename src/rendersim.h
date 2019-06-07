@@ -14,8 +14,8 @@ using namespace std;
 
 const int DEFAULT_NODE_NUM = 20;
 const int DEFAULT_WIN_SIZE = 400;
-const int MAX_INIT_MASS = 10;
-const int MAX_INIT_VELOCITY = 6;
+const int MAX_INIT_MASS = 900;
+const float MAX_INIT_VELOCITY = 0.00001;
 
 class RenderSim : public QWidget {
 	Q_OBJECT
@@ -32,8 +32,10 @@ class RenderSim : public QWidget {
 
 	private:
 		void createNodes();
+		void createSolarSystem();
 		void insertNodesIntoQuad();
 		void updateNodesForces();
+
 
 		int numNodes;
 		int winSize;

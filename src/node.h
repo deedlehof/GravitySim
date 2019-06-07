@@ -1,66 +1,30 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "constants.h"
+
 using namespace std;
-
-//const float GRAV_CONST = 6.674e-11;
-const float GRAV_CONST = 6e-10;
-const int UPDATES_PER_SEC = 10;
-const int TIMESTEP = 24 * 3600;
-
-struct Point{
-	int x, y;
-
-	Point(int _x, int _y){
-		x = _x;
-		y = _y;
-	}
-
-	Point(){
-		x = y = 0;
-	}
-
-	bool operator==(const Point& rhs){
-		return ((this->x == rhs.x) && (this->y == rhs.y));
-	}
-	bool operator!=(const Point& rhs){
-		return ((this->x != rhs.x) || (this->y != rhs.y));
-	}
-};
-
-struct Vector2{
-	float x, y;
-
-	Vector2(float _x, float _y){
-		x = _x;
-		y = _y;
-	}
-
-	Vector2(){
-		x = y = 0.0;
-	}
-
-	bool operator==(const Vector2& rhs){
-		return ((this->x == rhs.x) && (this->y == rhs.y));
-	}
-
-	bool operator!=(const Vector2& rhs){
-		return ((this->x != rhs.x) || (this->y != rhs.y));
-	}
-};
 
 class Node{
 
 	friend class Quad;
+
+	/* NODE CLASS
+	Given:
+		a unique id
+		position in AU
+		mass in MASS_SCALE adjusted form
+		velocity
+	*/
 
 	public:
 		Node(int _id, Vector2 _pos, float _mass, Vector2 _vel);
 		int getID();
 		double getX();
 		double getY();
-		float getRadius();
+		float getRadius(); //RADIUS IN AU
 		Vector2 getPos();
-		float getMass();
+		float getMass(); //MASS IN MASS_SCALE ADJUSTED FORM
 		Vector2 getVelocity();
 		void addForce(float objMass, Vector2 objPos);
 		bool attemptCollide(Node *collision);

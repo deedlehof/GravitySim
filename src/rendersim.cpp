@@ -23,16 +23,35 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 	//get millisecond sleep time (const from node.h)
 	int msSleep = 1000 / UPDATES_PER_SEC;
 
-	createNodes();
-	//TODO DELETE
-	insertNodesIntoQuad();
-	updateNodesForces();
-	//
+	//createNodes();
+	createSolarSystem();
 
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 	timer->start(msSleep);
 
+}
+
+void RenderSim::createSolarSystem(){
+		//the 'sun'
+		Vector2 center(winSize / 2, winSize / 2);
+		int m1 = 10000;
+		Vector2 v1(0.0, 0.0);
+		Node *n1 = new Node(0, center, m1, v1);
+		nodes.push_back(n1);
+
+
+		Vector2 p2(center.x, center.y - 40);
+		int m2 = 10;
+		Vector2 v2(0.000125, 0.0);
+		Node *n2 = new Node(1, p2, m2, v2);
+		nodes.push_back(n2);
+
+		n2 = new Node(2, {center.x, center.y + 90}, 13, {-0.00009, 0.0});
+		nodes.push_back(n2);
+
+		//n2 = new Node(3, {250, 420}, 9, {-0.00007, 0.0});
+		//nodes.push_back(n2);
 }
 
 void RenderSim::createNodes(){
@@ -43,34 +62,35 @@ void RenderSim::createNodes(){
 	Node *n1 = new Node(0, p1, m1, v1);
 	nodes.push_back(n1);
 	*/
-	/*
+	///*
 	int id = 0;
 	for (int i = 0; i < numNodes; i += 1){
 		Vector2 startPoint(rand() % winSize + 1,
 									rand() % winSize + 1);
 
-		int startMass = rand() % MAX_INIT_MASS + 1;
+		float startMass = (rand() % MAX_INIT_MASS + 1) + 100;
 
-		//Vector2 startVel(rand() % MAX_INIT_VELOCITY,
-		//					rand() % MAX_INIT_VELOCITY);
-		Vector2 startVel(0.0, 0.0);
+		Vector2 startVel(((float)rand() / RAND_MAX * MAX_INIT_VELOCITY),
+							((float)rand() / RAND_MAX * MAX_INIT_VELOCITY));
+		//Vector2 startVel(0.0, 0.0);
 
 		Node *newNode = new Node(id, startPoint, startMass, startVel);
 		nodes.push_back(newNode);
 		id += 1;
 	}
-	*/
-	///*
-		Point p1 = Point(250, 250);
-		int m1 = 15;
+	//*/
+	/*
+		Vector2 p1(250, 250);
+		int m1 = 1000;
 		Vector2 v1(0.0, 0.0);
 		Node *n1 = new Node(0, p1, m1, v1);
 		nodes.push_back(n1);
 
-		Point p2 = Point(50, 55);
-		int m2 = 4;
-		//Vector2 v2(-0.00004, 0.0);
-		Vector2 v2(0.0, 0.0);
+		Vector2 p2(250, 210);
+		int m2 = 100;
+		Vector2 v2(0.0001, 0.0);
+		//Vector2 v2(0.00001, 0.0);
+		//Vector2 v2(0.0, 0.0);
 		Node *n2 = new Node(1, p2, m2, v2);
 		nodes.push_back(n2);
 
@@ -79,7 +99,7 @@ void RenderSim::createNodes(){
 		//Vector2 v3(1, 0.0);
 		//Node *n3 = new Node(2, p3, m3, v3);
 		//nodes.push_back(n3);
-	//*/
+	*/
 }
 
 void RenderSim::insertNodesIntoQuad(){
@@ -122,7 +142,7 @@ void RenderSim::paintEvent(QPaintEvent *){
 	}
 
 	insertNodesIntoQuad();
-
+	/*
 	painter.setPen(Qt::blue);
 	painter.setBrush(Qt::white);
 	vector<Point> topCorners;
@@ -133,7 +153,7 @@ void RenderSim::paintEvent(QPaintEvent *){
 		int height = botCorners[i].y - topCorners[i].y;
 		painter.drawRect(topCorners[i].x, topCorners[i].y, width, height);
 	}
-
+	*/
 	updateNodesForces();
 
 	painter.setPen(Qt::white);
@@ -146,6 +166,7 @@ void RenderSim::paintEvent(QPaintEvent *){
 			int radius = ceil(node->getRadius());
 			painter.drawEllipse(node->getX() - radius, node->getY() - radius,
 							radius*2, radius*2);
+			node->resetForce();
 		}
 	}
 	/*
