@@ -11,6 +11,14 @@ Node::Node(int _id, Vector2 _pos, float _mass, Vector2 _vel){
 	velocity = _vel;
 }
 
+Node::Node(int _id, Vector2 _pos, float _mass, Vector2 _vel, NodeColor _nColor){
+	id = _id;
+	position = _pos;
+	mass = _mass;
+	velocity = _vel;
+	nColor = _nColor;
+}
+
 int Node::getID(){
 	return id;
 }
@@ -40,6 +48,10 @@ Vector2 Node::getVelocity(){
 	return velocity;
 }
 
+NodeColor Node::getColor(){
+	return nColor;
+}
+
 bool Node::attemptCollide(Node *collision){
 	//distances in AU
 	float xDist = position.x - collision->getX();
@@ -61,6 +73,8 @@ bool Node::attemptCollide(Node *collision){
 	velocity.y = (velocity.y * mass + collision->getVelocity().y * colliderMass) / totalMass;
 
 	mass = totalMass;
+
+	nColor = nColor + collision->getColor();
 
 	return true;
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h> //random num
 #include <time.h> //rand seed
 #include <QTimer> //updates sim
+#include <QColor> //setting node color
 
 #include "rendersim.h"
 
@@ -23,8 +24,8 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 	//get millisecond sleep time (const from node.h)
 	int msSleep = 1000 / UPDATES_PER_SEC;
 
-	//createNodes();
-	createSolarSystem();
+	createNodes();
+	//createSolarSystem();
 
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -37,17 +38,20 @@ void RenderSim::createSolarSystem(){
 		Vector2 center(winSize / 2, winSize / 2);
 		int m1 = 10000;
 		Vector2 v1(0.0, 0.0);
-		Node *n1 = new Node(0, center, m1, v1);
+		NodeColor yellowNC(255, 255, 0);
+		Node *n1 = new Node(0, center, m1, v1, yellowNC);
 		nodes.push_back(n1);
 
 
 		Vector2 p2(center.x, center.y - 40);
 		int m2 = 10;
 		Vector2 v2(0.000125, 0.0);
-		Node *n2 = new Node(1, p2, m2, v2);
+		NodeColor redNC(153, 0, 0);
+		Node *n2 = new Node(1, p2, m2, v2, redNC);
 		nodes.push_back(n2);
 
-		n2 = new Node(2, {center.x, center.y + 90}, 13, {-0.00009, 0.0});
+		n2 = new Node(2, {center.x, center.y + 90}, 13,
+							{-0.00009, 0.0}, {0, 0, 200});
 		nodes.push_back(n2);
 
 		//n2 = new Node(3, {250, 420}, 9, {-0.00007, 0.0});
@@ -70,11 +74,13 @@ void RenderSim::createNodes(){
 
 		float startMass = (rand() % MAX_INIT_MASS + 1) + 100;
 
-		Vector2 startVel(((float)rand() / RAND_MAX * MAX_INIT_VELOCITY),
-							((float)rand() / RAND_MAX * MAX_INIT_VELOCITY));
-		//Vector2 startVel(0.0, 0.0);
+		//Vector2 startVel(((float)rand() / RAND_MAX * MAX_INIT_VELOCITY),
+		//					((float)rand() / RAND_MAX * MAX_INIT_VELOCITY));
+		Vector2 startVel(0.0, 0.0);
 
-		Node *newNode = new Node(id, startPoint, startMass, startVel);
+		NodeColor startColor(rand() % 256, rand() % 256, rand() % 256);
+
+		Node *newNode = new Node(id, startPoint, startMass, startVel, startColor);
 		nodes.push_back(newNode);
 		id += 1;
 	}
@@ -156,7 +162,7 @@ void RenderSim::paintEvent(QPaintEvent *){
 	*/
 	updateNodesForces();
 
-	painter.setPen(Qt::white);
+	painter.setPen(Qt::black);
 	painter.setBrush(Qt::black);
 
 	for (auto const& node: nodes){
@@ -164,6 +170,8 @@ void RenderSim::paintEvent(QPaintEvent *){
 			node->updateVelocity();
 			node->updatePosition();
 			int radius = ceil(node->getRadius());
+			NodeColor nColor= node->getColor();
+			painter.setBrush(QColor(nColor.r, nColor.g, nColor.b));
 			painter.drawEllipse(node->getX() - radius, node->getY() - radius,
 							radius*2, radius*2);
 			node->resetForce();

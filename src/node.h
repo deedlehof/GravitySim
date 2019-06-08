@@ -19,18 +19,23 @@ class Node{
 
 	public:
 		Node(int _id, Vector2 _pos, float _mass, Vector2 _vel);
+		Node(int _id, Vector2 _pos, float _mass, Vector2 _vel, NodeColor _nColor);
+
 		int getID();
 		double getX();
 		double getY();
-		float getRadius(); //RADIUS IN AU
+		float getRadius();
 		Vector2 getPos();
-		float getMass(); //MASS IN MASS_SCALE ADJUSTED FORM
+		float getMass();
 		Vector2 getVelocity();
+		NodeColor getColor();
+
 		void addForce(float objMass, Vector2 objPos);
-		bool attemptCollide(Node *collision);
 		void resetForce();
 		void updatePosition();
 		void updateVelocity();
+		bool attemptCollide(Node *collision);
+
 		void print();
 
 
@@ -40,6 +45,8 @@ class Node{
 		Vector2 velocity;
 		Vector2 netForce;
 		int id;
+
+		NodeColor nColor;
 };
 
 

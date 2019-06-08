@@ -10,18 +10,20 @@ using namespace std;
 
 int main(int argc, char *argv[]){
 
-	if (argc != 3){
-		cout << "Usage: " << argv[0] << " <Number of Nodes> <Window Size>" << endl;
+	if (argc < 3 || argc > 4){
+		cout << "Usage: " << argv[0] << " Window Size <Number of Nodes>" << endl;
 		return 1;
 	}
 
 	if (!isdigit(*argv[1]) || !isdigit(*argv[2])){
-		cout << "Usage: " << argv[0] << " <Number of Nodes> <Window Size>" << endl;
+		cout << "Usage: " << argv[0] << " Window Size <Number of Nodes>" << endl;
 		return 1;
 	}
 
+
 	QApplication app(argc, argv);
-	RenderSim newSim(atoi(argv[1]), atoi(argv[2]));
+	RenderSim newSim(atoi(argv[2]), atoi(argv[1]));
 	newSim.show();
+
 	return app.exec();
 }

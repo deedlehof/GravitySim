@@ -60,4 +60,37 @@ struct Vector2{
 	}
 };
 
+struct NodeColor{
+	unsigned short r, g, b;
+
+	NodeColor(){
+		r = 0;
+		g = 0;
+		b = 0;
+	}
+
+	NodeColor(unsigned short _r, unsigned short _g, unsigned short _b){
+		if (_r > 255) 	_r = 255;
+		if (_g > 255) 	_g = 255;
+		if (_b > 255) 	_b = 255;
+		r = _r;
+		g = _g;
+		b = _b;
+	}
+
+	NodeColor operator+(const NodeColor &c2){
+		NodeColor tmp;
+		tmp.r = (r + c2.r) / 2;
+		tmp.g = (g + c2.g) / 2;
+		tmp.b = (b + c2.b) / 2;
+		return tmp;
+	}
+
+	void operator=(const NodeColor &c2){
+		r = c2.r;
+		g = c2.g;
+		b = c2.b;
+	}
+};
+
 #endif
