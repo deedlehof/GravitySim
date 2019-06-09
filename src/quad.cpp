@@ -143,13 +143,13 @@ void Quad::subdivide(){
 			Point(topLeft.x, topLeft.y),
 			Point((topLeft.x + botRight.x) / 2, (topLeft.y + botRight.y) / 2));
 	topRightTree = new Quad(
-			Point((topLeft.x + botRight.x) / 2 + 1, topLeft.y),
+			Point((topLeft.x + botRight.x) / 2, topLeft.y),
 				Point(botRight.x, (topLeft.y + botRight.y) / 2));
 	botLeftTree = new Quad(
-			Point(topLeft.x, (topLeft.y + botRight.y) / 2 + 1),
+			Point(topLeft.x, (topLeft.y + botRight.y) / 2),
 			Point((topLeft.x + botRight.x) / 2, botRight.y));
 	botRightTree = new Quad(
-			Point((topLeft.x + botRight.x) / 2 + 1, (topLeft.y + botRight.y) / 2 + 1),
+			Point((topLeft.x + botRight.x) / 2, (topLeft.y + botRight.y) / 2),
 			Point(botRight.x, botRight.y));
 }
 

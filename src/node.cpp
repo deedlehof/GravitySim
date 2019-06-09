@@ -128,8 +128,8 @@ void Node::updatePosition(int timeStep){
 	//update the nodes velocity
 	updateVelocity(timeStep);
 	//Xf = V*t + Xi
-	position.x += round(velocity.x * timeStep);
-	position.y += round(velocity.y * timeStep);
+	position.x += velocity.x * timeStep;
+	position.y += velocity.y * timeStep;
 }
 
 void Node::print(){
