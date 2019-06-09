@@ -39,6 +39,9 @@ Quad::Quad(Point _topLeft, Point _botRight){
 }
 
 Quad::~Quad(){
+	//node will be cleaned up in another place
+	//the tree is rebuilt multiple times with
+	//the same nodes
 	if (topLeftTree){
 		delete topLeftTree;
 		delete topRightTree;
@@ -47,10 +50,13 @@ Quad::~Quad(){
 	}
 }
 
+//used for debugging
+//gets the corners of the quads
 void Quad::getBounds(vector<Point> &topCorners, vector<Point> &botCorners){
 	topCorners.push_back(topLeft);
 	botCorners.push_back(botRight);
 
+	//if not a leaf then recursively call on children
 	if (topLeftTree) {
 		topLeftTree->getBounds(topCorners, botCorners);
 		topRightTree->getBounds(topCorners, botCorners);
@@ -65,12 +71,7 @@ bool Quad::insert(Node *newNode){
 		return false;
 	}
 
-	//TODO USE THIS TO DETERMINE IF TWO NODES OVERLAP, COLLISION
-
-	//WHEN MAKING NEW NODES USE THE FALSE RETURN AS
-	//A SIGN TO INSERT ANOTHER, EXTRA NODE TO MAKE
-	//ACTUAL NODE NUMBER CORRECT
-	//check that quad isn't too small
+	//might need later
 	/*
 	if ((botRight.x - topLeft.x) < 1){
 		return false;
@@ -132,27 +133,24 @@ Node* Quad::search(Vector2 p){
 }
 
 void Quad::subdivide(){
-	if (topLeftTree == NULL){
-		topLeftTree = new Quad(
-				Point(topLeft.x, topLeft.y),
-				Point((topLeft.x + botRight.x) / 2, (topLeft.y + botRight.y) / 2));
+	//don't subdivide if subtree alread exists
+	if (topLeftTree != NULL){
+		return;
 	}
 
-	if (topRightTree == NULL){
-		topRightTree = new Quad(
-				Point((topLeft.x + botRight.x) / 2 + 1, topLeft.y),
-					Point(botRight.x, (topLeft.y + botRight.y) / 2));
-	}
-	if (botLeftTree == NULL){
-		botLeftTree = new Quad(
-				Point(topLeft.x, (topLeft.y + botRight.y) / 2 + 1),
-				Point((topLeft.x + botRight.x) / 2, botRight.y));
-	}
-	if (botRightTree == NULL){
-		botRightTree = new Quad(
-				Point((topLeft.x + botRight.x) / 2 + 1, (topLeft.y + botRight.y) / 2 + 1),
-				Point(botRight.x, botRight.y));
-	}
+	//create new quads
+	topLeftTree = new Quad(
+			Point(topLeft.x, topLeft.y),
+			Point((topLeft.x + botRight.x) / 2, (topLeft.y + botRight.y) / 2));
+	topRightTree = new Quad(
+			Point((topLeft.x + botRight.x) / 2 + 1, topLeft.y),
+				Point(botRight.x, (topLeft.y + botRight.y) / 2));
+	botLeftTree = new Quad(
+			Point(topLeft.x, (topLeft.y + botRight.y) / 2 + 1),
+			Point((topLeft.x + botRight.x) / 2, botRight.y));
+	botRightTree = new Quad(
+			Point((topLeft.x + botRight.x) / 2 + 1, (topLeft.y + botRight.y) / 2 + 1),
+			Point(botRight.x, botRight.y));
 }
 
 bool Quad::inBoundary(Vector2 p){

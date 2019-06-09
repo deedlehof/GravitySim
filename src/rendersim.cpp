@@ -12,11 +12,16 @@ RenderSim::RenderSim(){
 	RenderSim(DEFAULT_NODE_NUM, DEFAULT_WIN_SIZE);
 }
 
-//TODO fix memory leak
 RenderSim::RenderSim(int _numNodes, int _winSize){
+	//set object vars
 	numNodes = _numNodes;
 	winSize = _winSize;
 	root = new Quad(Point(0, 0), Point(winSize, winSize));
+	//default the time step to one day per update
+	//each node creation method can update this
+	timeStep = 24 * 3600;
+	//if true rendersim will display extra info in sim
+	debug = false;
 
 	//set random seed
 	srand(time(NULL));
@@ -54,19 +59,9 @@ void RenderSim::createSolarSystem(){
 							{-0.00009, 0.0}, {0, 0, 200});
 		nodes.push_back(n2);
 
-		//n2 = new Node(3, {250, 420}, 9, {-0.00007, 0.0});
-		//nodes.push_back(n2);
 }
 
 void RenderSim::createNodes(){
-	/*
-	Vector2 p1(250, 250);
-	int m1 = 300;
-	Vector2 v1(0.0, 0.0);
-	Node *n1 = new Node(0, p1, m1, v1);
-	nodes.push_back(n1);
-	*/
-	///*
 	int id = 0;
 	for (int i = 0; i < numNodes; i += 1){
 		Vector2 startPoint(rand() % winSize + 1,
@@ -84,28 +79,22 @@ void RenderSim::createNodes(){
 		nodes.push_back(newNode);
 		id += 1;
 	}
-	//*/
-	/*
-		Vector2 p1(250, 250);
-		int m1 = 1000;
-		Vector2 v1(0.0, 0.0);
-		Node *n1 = new Node(0, p1, m1, v1);
-		nodes.push_back(n1);
+}
 
-		Vector2 p2(250, 210);
-		int m2 = 100;
-		Vector2 v2(0.0001, 0.0);
-		//Vector2 v2(0.00001, 0.0);
-		//Vector2 v2(0.0, 0.0);
-		Node *n2 = new Node(1, p2, m2, v2);
-		nodes.push_back(n2);
+void RenderSim::createTestNodes(){
+	Vector2 p1(250, 250);
+	int m1 = 1000;
+	Vector2 v1(0.0, 0.0);
+	Node *n1 = new Node(0, p1, m1, v1);
+	nodes.push_back(n1);
 
-		//Point p3 = Point(25, 25);
-		//int m3 = 4;
-		//Vector2 v3(1, 0.0);
-		//Node *n3 = new Node(2, p3, m3, v3);
-		//nodes.push_back(n3);
-	*/
+	Vector2 p2(250, 210);
+	int m2 = 100;
+	Vector2 v2(0.0001, 0.0);
+	//Vector2 v2(0.00001, 0.0);
+	//Vector2 v2(0.0, 0.0);
+	Node *n2 = new Node(1, p2, m2, v2);
+	nodes.push_back(n2);
 }
 
 void RenderSim::insertNodesIntoQuad(){
@@ -121,12 +110,15 @@ void RenderSim::insertNodesIntoQuad(){
 }
 
 void RenderSim::updateNodesForces(){
-	list<Node*>::iterator it;
-	for (it = nodes.begin(); it != nodes.end(); ++it){
+	list<Node*>::iterator it = nodes.begin();
+	while (it != nodes.end()){
 		if (*it){
 			root->updateNodeForce(*it);
+			it++;
 		} else {
-			cout << "DANGER! DANGER! ATTEMPT TO DO BAD THINGS!" << endl;
+			cout << "DANGER! ATTEMPT TO UPDATE NON-EXISTANT NODE!\n";
+			it = nodes.erase(it);
+			numNodes -= 1;
 		}
 	}
 }
@@ -148,40 +140,42 @@ void RenderSim::paintEvent(QPaintEvent *){
 	}
 
 	insertNodesIntoQuad();
-	/*
-	painter.setPen(Qt::blue);
-	painter.setBrush(Qt::white);
-	vector<Point> topCorners;
-	vector<Point> botCorners;
-	root->getBounds(topCorners, botCorners);
-	for (int i =0; i < topCorners.size(); i += 1){
-		int width = botCorners[i].x - topCorners[i].x;
-		int height = botCorners[i].y - topCorners[i].y;
-		painter.drawRect(topCorners[i].x, topCorners[i].y, width, height);
+	//if in debug, then show the quads
+	if (debug) {
+		painter.setPen(Qt::blue);
+		painter.setBrush(Qt::white);
+		vector<Point> topCorners;
+		vector<Point> botCorners;
+		//get the upper and lower corners of each quad
+		root->getBounds(topCorners, botCorners);
+		//draw each quad
+		for (int i =0; i < topCorners.size(); i += 1){
+			int width = botCorners[i].x - topCorners[i].x;
+			int height = botCorners[i].y - topCorners[i].y;
+			painter.drawRect(topCorners[i].x, topCorners[i].y, width, height);
+		}
 	}
-	*/
+
+	//calculate the force on each node
 	updateNodesForces();
 
 	painter.setPen(Qt::black);
-	painter.setBrush(Qt::black);
 
+	//update and draw each node
 	for (auto const& node: nodes){
-		if (node){
-			node->updateVelocity();
-			node->updatePosition();
-			int radius = ceil(node->getRadius());
-			NodeColor nColor= node->getColor();
-			painter.setBrush(QColor(nColor.r, nColor.g, nColor.b));
-			painter.drawEllipse(node->getX() - radius, node->getY() - radius,
-							radius*2, radius*2);
-			node->resetForce();
-		}
+		//update the node's position and velocity
+		//the update is with respect to the timestep passed
+		node->updatePosition(timeStep);
+		int radius = ceil(node->getRadius());
+
+		NodeColor nColor= node->getColor();
+		painter.setBrush(QColor(nColor.r, nColor.g, nColor.b));
+
+		painter.drawEllipse(node->getX() - radius, node->getY() - radius,
+						radius*2, radius*2);
+
+		//force isn't cumulative over updates
+		//reset it to the default
+		node->resetForce();
 	}
-	/*
-	nodes[0]->print();
-	nodes[0]->resetForce();
-	nodes[1]->print();
-	nodes[1]->resetForce();
-	cout << endl;
-	*/
 }

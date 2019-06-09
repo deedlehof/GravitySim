@@ -1,21 +1,19 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef SHARED_STRUCTS_H
+#define SHARED_STRUCTS_H
 
 //CALCULATION
 //universal gravitational constant
-const float GRAV_CONST = 6.674e-11;
+//const float GRAV_CONST = 6.674e-11;
 //length of an astronomical unit in kilometers
-const unsigned long AU = 149.6e6;
-//mass scaling factor
-const int MASS_SCALE_POW = 20;
+//const unsigned long AU = 149.6e6;
 
 //SIMULATION
 //the number of updates per second
-const int UPDATES_PER_SEC = 20;
+//const int UPDATES_PER_SEC = 20;
 //how much time passes for each update
-const int TIMESTEP = 24 * 3600;
+//const int TIMESTEP = 24 * 3600;
 //how much the distances are scaled to fit on screen (arbitrary)
-const double PIXELS_PER_AU = 100;
+//const double PIXELS_PER_AU = 100;
 
 
 //SHARED STRUCTURES

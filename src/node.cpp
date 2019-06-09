@@ -4,6 +4,7 @@
 
 using namespace std;
 
+//color is optional, defaults to black
 Node::Node(int _id, Vector2 _pos, float _mass, Vector2 _vel){
 	id = _id;
 	position = _pos;
@@ -53,11 +54,10 @@ NodeColor Node::getColor(){
 }
 
 bool Node::attemptCollide(Node *collision){
-	//distances in AU
-	float xDist = position.x - collision->getX();
-	float yDist = position.y - collision->getY();
-	float distanceSquared = xDist * xDist + yDist * yDist;
-	float threshold = pow(getRadius() + collision->getRadius(), 2);
+	double xDist = position.x - collision->getX();
+	double yDist = position.y - collision->getY();
+	double distanceSquared = xDist * xDist + yDist * yDist;
+	double threshold = pow(getRadius() + collision->getRadius(), 2);
 
 	//test if the distance between the nodes
 	//is greater than the distance if they were touching
@@ -69,6 +69,7 @@ bool Node::attemptCollide(Node *collision){
 	float colliderMass = collision->getMass();
 	float totalMass = mass + colliderMass;
 
+	//find the proportional sum of each nodes velocity
 	velocity.x = (velocity.x * mass + collision->getVelocity().x * colliderMass) / totalMass;
 	velocity.y = (velocity.y * mass + collision->getVelocity().y * colliderMass) / totalMass;
 
@@ -83,17 +84,22 @@ void Node::addForce(float objMass, Vector2 objPos){
 	double xDist, yDist;
 	double xForce, yForce;
 
+	//distance between the two nodes
 	xDist = objPos.x - position.x;
 	yDist = objPos.y - position.y;
 
 	float distSquared = xDist * xDist + yDist * yDist;
 
+	//prevent division by zero
+	//node will be cleaned up by collision
 	if (distSquared == 0){
 		xForce = 0;
 		yForce = 0;
 	} else {
+		//total force on object
 		float totalForce = GRAV_CONST * mass * objMass / distSquared;
 		float theta = atan2(yDist, xDist);
+		//force along each axis
 		xForce = cos(theta) * totalForce;
 		yForce = sin(theta) * totalForce;
 	}
@@ -107,16 +113,23 @@ void Node::resetForce(){
 	netForce.y = 0;
 }
 
-void Node::updateVelocity(){
+void Node::updateVelocity(int timeStep){
 	//Vf = Ft / m + Vi
-	velocity.x += netForce.x / mass * TIMESTEP;
-	velocity.y += netForce.y / mass * TIMESTEP;
+	velocity.x += netForce.x / mass * timeStep;
+	velocity.y += netForce.y / mass * timeStep;
 }
 
 void Node::updatePosition(){
+	//call update with arbitrary timestep (one day)
+	updatePosition(24*3600);
+}
+
+void Node::updatePosition(int timeStep){
+	//update the nodes velocity
+	updateVelocity(timeStep);
 	//Xf = V*t + Xi
-	position.x += round(velocity.x * TIMESTEP);
-	position.y += round(velocity.y * TIMESTEP);
+	position.x += round(velocity.x * timeStep);
+	position.y += round(velocity.y * timeStep);
 }
 
 void Node::print(){

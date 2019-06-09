@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include "node.h"
+#include "shared_structs.h"
 
 using namespace std;
 
@@ -36,8 +37,8 @@ class Quad {
 		Quad *topRightTree;
 		Quad *botLeftTree;
 		Quad *botRightTree;
-
-		Vector2 COM; //children's center of mass
+		//children's center of mass
+		Vector2 COM;
 		int totalMass;
 		//used for calculating center of mass
 		Vector2 nodeMassDistance;

@@ -9,6 +9,7 @@
 
 #include "node.h"
 #include "quad.h"
+#include "shared_structs.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ const int DEFAULT_NODE_NUM = 20;
 const int DEFAULT_WIN_SIZE = 400;
 const int MAX_INIT_MASS = 900;
 const float MAX_INIT_VELOCITY = 0.00001;
+const int UPDATES_PER_SEC = 20;
 
 class RenderSim : public QWidget {
 	Q_OBJECT
@@ -32,15 +34,17 @@ class RenderSim : public QWidget {
 
 	private:
 		void createNodes();
+		void createTestNodes();
 		void createSolarSystem();
 		void insertNodesIntoQuad();
 		void updateNodesForces();
-
 
 		int numNodes;
 		int winSize;
 		Quad *root;
 		list<Node*> nodes;
+		unsigned int timeStep;
+		bool debug;
 };
 
 #endif
