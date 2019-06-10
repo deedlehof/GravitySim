@@ -5,19 +5,23 @@
 using namespace std;
 
 //color is optional, defaults to black
-Node::Node(int _id, Vector2 _pos, float _mass, Vector2 _vel){
+Node::Node(int _id, Vector2 _pos, float _mass, float _density, Vector2 _vel){
 	id = _id;
 	position = _pos;
 	mass = _mass;
+	density = _density;
 	velocity = _vel;
+	radius = calcRadius();
 }
 
-Node::Node(int _id, Vector2 _pos, float _mass, Vector2 _vel, NodeColor _nColor){
+Node::Node(int _id, Vector2 _pos, float _mass, float _density, Vector2 _vel, NodeColor _nColor){
 	id = _id;
 	position = _pos;
 	mass = _mass;
+	density = _density;
 	velocity = _vel;
 	nColor = _nColor;
+	radius = calcRadius();
 }
 
 int Node::getID(){
@@ -36,13 +40,20 @@ Vector2 Node::getPos(){
 	return position;
 }
 
-//TODO FIX
 float Node::getRadius(){
-	return 5;
+	return radius;
+}
+
+float Node::calcRadius(){
+	return cbrt(mass / (4 * density));
 }
 
 float Node::getMass(){
 	return mass;
+}
+
+float Node::getDensity(){
+	return density;
 }
 
 Vector2 Node::getVelocity(){
@@ -74,6 +85,8 @@ bool Node::attemptCollide(Node *collision){
 	velocity.y = (velocity.y * mass + collision->getVelocity().y * colliderMass) / totalMass;
 
 	mass = totalMass;
+	density = (density * mass + collision->getDensity() * colliderMass) / totalMass;
+	radius = calcRadius();
 
 	nColor = nColor + collision->getColor();
 

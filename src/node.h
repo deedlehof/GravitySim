@@ -10,8 +10,8 @@ const float GRAV_CONST = 6.67e-11;
 class Node{
 
 	public:
-		Node(int _id, Vector2 _pos, float _mass, Vector2 _vel);
-		Node(int _id, Vector2 _pos, float _mass, Vector2 _vel, NodeColor _nColor);
+		Node(int _id, Vector2 _pos, float _mass, float _density, Vector2 _vel);
+		Node(int _id, Vector2 _pos, float _mass, float _density, Vector2 _vel, NodeColor _nColor);
 		//getters and setters
 		int getID();
 		double getX();
@@ -19,6 +19,7 @@ class Node{
 		float getRadius();
 		Vector2 getPos();
 		float getMass();
+		float getDensity();
 		Vector2 getVelocity();
 		NodeColor getColor();
 		//force, velocity, position functions
@@ -33,12 +34,15 @@ class Node{
 
 	private:
 		void updateVelocity(int timeStep);
+		float calcRadius();
 
 		Vector2 position;
 		float mass;
+		float density;
 		Vector2 velocity;
 		Vector2 netForce;
 		int id;
+		float radius;
 
 		NodeColor nColor;
 };
