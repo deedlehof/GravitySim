@@ -17,7 +17,7 @@ const int DEFAULT_NODE_NUM = 20;
 const int DEFAULT_WIN_SIZE = 400;
 const int MAX_INIT_MASS = 900;
 const float MAX_INIT_VELOCITY = 0.00001;
-const int UPDATES_PER_SEC = 20;
+const int UPDATES_PER_SEC = 50;
 
 class RenderSim : public QWidget {
 	Q_OBJECT
@@ -43,7 +43,9 @@ class RenderSim : public QWidget {
 		int winSize;
 		Quad *root;
 		list<Node*> nodes;
+
 		unsigned int timeStep;
+		double scaleFactor;
 		bool debug;
 };
 

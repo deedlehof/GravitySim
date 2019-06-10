@@ -68,9 +68,9 @@ struct NodeColor{
 	}
 
 	NodeColor(unsigned short _r, unsigned short _g, unsigned short _b){
-		if (_r > 255) 	_r = 255;
-		if (_g > 255) 	_g = 255;
-		if (_b > 255) 	_b = 255;
+		if (_r > 255) 	_r %= 255;
+		if (_g > 255) 	_g %= 255;
+		if (_b > 255) 	_b %= 255;
 		r = _r;
 		g = _g;
 		b = _b;

@@ -133,6 +133,7 @@ void Node::updatePosition(int timeStep){
 }
 
 void Node::print(){
+	cout << "====== " << id << " ======" << endl;
 	cout << "POSITION" << endl;
 	cout << "X: " << position.x << endl;
 	cout << "Y: " << position.y << endl;
@@ -143,4 +144,5 @@ void Node::print(){
 	cout << "FORCE" << endl;
 	cout << "X: " << netForce.x << endl;
 	cout << "Y: " << netForce.y << endl;
+	cout << endl;
 }
