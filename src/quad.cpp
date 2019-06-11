@@ -71,13 +71,6 @@ bool Quad::insert(Node *newNode){
 		return false;
 	}
 
-	//might need later
-	/*
-	if ((botRight.x - topLeft.x) < 1){
-		return false;
-	}
-	*/
-
 	//if quad is leaf
 	if (!topLeftTree){
 		//no node in leaf, insert it
@@ -175,10 +168,21 @@ void Quad::updateNodeForce(Node *fNode){
 			fNode->addForce(node->getMass(), node->getPos());
 		}
 	} else if (topLeftTree){
-		//run the algorithm on all of the children
-		topLeftTree->updateNodeForce(fNode);
-		topRightTree->updateNodeForce(fNode);
-		botLeftTree->updateNodeForce(fNode);
-		botRightTree->updateNodeForce(fNode);
+		//use the Barnes-Hut Algorithm to decide if a quad
+		//can be treated as a whole, or if it needs to be
+		//subdivided
+		int quadWidth = botRight.x - topLeft.x;
+		double distToCOM = sqrt(pow(fNode->getX() - COM.x, 2) +
+								pow(fNode->getY() - COM.y, 2));
+
+		if (quadWidth / distToCOM < BH_THRESHOLD){
+			fNode->addForce(totalMass, COM);
+		} else {
+			//run the algorithm on all of the children
+			topLeftTree->updateNodeForce(fNode);
+			topRightTree->updateNodeForce(fNode);
+			botLeftTree->updateNodeForce(fNode);
+			botRightTree->updateNodeForce(fNode);
+		}
 	}
 }

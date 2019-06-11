@@ -31,8 +31,8 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 	int msSleep = 1000 / UPDATES_PER_SEC;
 
 //	createTestNodes();
-	createNodes();
-//	createSolarSystem();
+//	createNodes();
+	createSolarSystem();
 
 	//quad must be generated after nodes
 	//need the scale factor from node generation
@@ -72,8 +72,8 @@ void RenderSim::createSolarSystem(){
 }
 
 void RenderSim::createNodes(){
-	timeStep = 24 * 3600 / (UPDATES_PER_SEC * ((float)numNodes / (winSize * scaleFactor)));
-	//timeStep = 24 * 3600;
+	//timeStep = 24 * 3600 / (UPDATES_PER_SEC * ((float)numNodes / (winSize * scaleFactor)));
+	timeStep = 3600;
 	scaleFactor = 2;
 
 	int id = 0;
@@ -89,7 +89,8 @@ void RenderSim::createNodes(){
 
 		NodeColor startColor(rand() % 256, rand() % 256, rand() % 256);
 
-		Node *newNode = new Node(id, startPoint, startMass, 0.5, startVel, startColor);
+		//Node *newNode = new Node(id, startPoint, startMass, 0.5, startVel, startColor);
+		Node *newNode = new Node(id, startPoint, startMass, 5, startVel, startColor);
 		nodes.push_back(newNode);
 		id += 1;
 	}

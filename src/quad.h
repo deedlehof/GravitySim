@@ -10,7 +10,7 @@ using namespace std;
 
 //default 0.5
 //value of 0 will make algorithm run force calc for each node
-const float BODY_THRESHOLD = 0.5;
+const float BH_THRESHOLD = 0.5;
 
 class Quad {
 	public:
