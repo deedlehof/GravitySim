@@ -3,24 +3,84 @@
 #include <time.h> //rand seed
 #include <QTimer> //updates sim
 #include <QColor> //setting node color
+#include <fstream> //reading nodes from file
+#include <sstream> //break line into data
 
 #include "rendersim.h"
 
 using namespace std;
 
-RenderSim::RenderSim(){
-	RenderSim(DEFAULT_NODE_NUM, DEFAULT_WIN_SIZE);
+RenderSim::RenderSim(char* fileName){
+	debug = false;
+
+	//open file
+	ifstream file(fileName);
+
+	//test that file opened
+	//error out if failed
+	if (!file.is_open()){
+		cout << "Failed to open file!" << endl;
+		return;
+	}
+
+	//get header info
+	file >> winSize;
+	file >> scaleFactor;
+	file >> timeStep;
+
+	string line;
+	numNodes = 0;
+
+	double x, y, velx, vely;
+	float mass, density;
+	unsigned short r, g, b;
+
+	//remove end line
+	getline(file, line);
+
+	//loop through nodes in file
+	//create a node for each line in the file
+	while (getline(file, line)){
+		// the # char is for comments
+		if (line[0] != '#') {
+			//use stringstream to split each line into data
+			stringstream liness(line);
+
+			liness >> x >> y;
+			Vector2 pos(x * scaleFactor, y * scaleFactor);
+
+			liness >> velx >> vely;
+			Vector2 vel(velx, vely);
+
+			liness >> mass >> density;
+
+			liness >> r >> g >> b;
+			NodeColor col(r, g, b);
+
+			Node *tmp = new Node(numNodes, pos, mass, density, vel, col);
+			nodes.push_back(tmp);
+
+			numNodes += 1;
+		}
+	}
+
+	file.close();
+
+	int msSleep = 1000 / UPDATES_PER_SEC;
+
+	//generate initial quad
+	root = new Quad(Point(0, 0), Point(winSize * scaleFactor, winSize * scaleFactor));
+
+	//start drawing loop
+	QTimer *timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+	timer->start(msSleep);
 }
 
 RenderSim::RenderSim(int _numNodes, int _winSize){
 	//set object vars
 	numNodes = _numNodes;
 	winSize = _winSize;
-	//default the time step to one day per update
-	//each node creation method can update this
-	timeStep = 24 * 3600;
-	//how much the nodes position will be scaled to fit screen
-	scaleFactor = 1;
 	//if true rendersim will display extra info in sim
 	debug = false;
 
@@ -31,8 +91,8 @@ RenderSim::RenderSim(int _numNodes, int _winSize){
 	int msSleep = 1000 / UPDATES_PER_SEC;
 
 //	createTestNodes();
-//	createNodes();
-	createSolarSystem();
+	createNodes();
+//	createSolarSystem();
 
 	//quad must be generated after nodes
 	//need the scale factor from node generation
@@ -72,8 +132,8 @@ void RenderSim::createSolarSystem(){
 }
 
 void RenderSim::createNodes(){
-	//timeStep = 24 * 3600 / (UPDATES_PER_SEC * ((float)numNodes / (winSize * scaleFactor)));
-	timeStep = 3600;
+	timeStep = 24 * 3600 / (UPDATES_PER_SEC * ((float)numNodes / winSize));
+//	timeStep = 12 * 3600;
 	scaleFactor = 2;
 
 	int id = 0;
@@ -83,14 +143,14 @@ void RenderSim::createNodes(){
 
 		float startMass = (rand() % MAX_INIT_MASS + 1) + 100;
 
-		//Vector2 startVel(((float)rand() / RAND_MAX * MAX_INIT_VELOCITY),
-		//					((float)rand() / RAND_MAX * MAX_INIT_VELOCITY));
-		Vector2 startVel(0.0, 0.0);
+		Vector2 startVel(((float)rand() / RAND_MAX * (MAX_INIT_VELOCITY * 2) - MAX_INIT_VELOCITY),
+							((float)rand() / RAND_MAX * (MAX_INIT_VELOCITY * 2) - MAX_INIT_VELOCITY));
+		//Vector2 startVel(0.0, 0.0);
 
 		NodeColor startColor(rand() % 256, rand() % 256, rand() % 256);
 
 		//Node *newNode = new Node(id, startPoint, startMass, 0.5, startVel, startColor);
-		Node *newNode = new Node(id, startPoint, startMass, 5, startVel, startColor);
+		Node *newNode = new Node(id, startPoint, startMass, 3, startVel, startColor);
 		nodes.push_back(newNode);
 		id += 1;
 	}

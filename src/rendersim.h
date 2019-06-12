@@ -16,14 +16,14 @@ using namespace std;
 const int DEFAULT_NODE_NUM = 20;
 const int DEFAULT_WIN_SIZE = 400;
 const int MAX_INIT_MASS = 900;
-const float MAX_INIT_VELOCITY = 0.00001;
+const float MAX_INIT_VELOCITY = 0.00005;
 const int UPDATES_PER_SEC = 30;
 
 class RenderSim : public QWidget {
 	Q_OBJECT
 
 	public:
-		RenderSim();
+		RenderSim(char* fileName);
 		RenderSim(int _numNodes, int _winSize);
 
 		QSize minimumSizeHint() const override;
